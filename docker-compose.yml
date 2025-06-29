@@ -1,0 +1,56 @@
+version: '3'
+
+
+
+services:
+
+  nats-server:
+    image: nats:latest
+    ports: 
+      - "8222:8222"
+
+  product-gateway:
+    build: ./product-gateway
+    ports:
+      - "${PORT}:3000"
+    volumes:
+      -  ./product-gateway/src:/usr/src/app/src
+    command: npm run dev
+
+    environment:
+      - PORT=3000
+      - PRODUCT_SERVICE_URL=http://product-service:3001
+      - SERVER=nats://nats-server:4222
+  
+  product-microservice:
+    build: ./Product-microservice
+    ports:
+      - "${PORTm}:3001"
+    volumes:
+      -  ./Product-microservice/src:/usr/src/app/src
+    command: npm run dev
+
+    environment:
+      - PORT=3001
+      - SERVER=nats://nats-server:4222
+      - DATABASE_URL=file:./dev.db   
+     
+  orders-ms:
+    depends_on: 
+    - product-microservice
+    build: ./orders-ms
+    ports:
+      - "${PORTo}:3002"
+    volumes:
+      -  ./orders-ms/src:/usr/src/app/src
+    command: npm run dev
+
+    environment:
+      - PORT=3002
+      - SERVER=nats://nats-server:4222
+      - DATABASE_URL=postgresql://microservice_g2e9_user:lQCQo63OxoE6pQWiGwkWEesYk1EtN3v1@dpg-d19qr2p5pdvs73a3anfg-a.oregon-postgres.render.com/microservice_g2e9
+      - NATS_URL=nats://nats-server:4222 
+     
+
+
+    
