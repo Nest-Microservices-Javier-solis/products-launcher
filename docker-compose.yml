@@ -19,7 +19,6 @@ services:
 
     environment:
       - PORT=3000
-      - PRODUCT_SERVICE_URL=http://product-service:3001
       - SERVER=nats://nats-server:4222
   
   product-microservice:
@@ -33,7 +32,7 @@ services:
     environment:
       - PORT=3001
       - SERVER=nats://nats-server:4222
-      - DATABASE_URL=file:./dev.db   
+      - DATABASE_URL=postgresql://product_nzm1_user:ss5eM4mIswwEEo4vOES5PlKD7VJiLSPi@dpg-d1gt0kqli9vc73b32rog-a.oregon-postgres.render.com/product_nzm1
      
   orders-ms:
     depends_on: 
@@ -47,7 +46,6 @@ services:
 
     environment:
       - PORT=3002
-      - SERVER=nats://nats-server:4222
       - DATABASE_URL=postgresql://microservice_g2e9_user:lQCQo63OxoE6pQWiGwkWEesYk1EtN3v1@dpg-d19qr2p5pdvs73a3anfg-a.oregon-postgres.render.com/microservice_g2e9
       - NATS_URL=nats://nats-server:4222 
      
